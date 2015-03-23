@@ -24,6 +24,8 @@ def weightedRandom(weights):
         if rnd < 0:
             return i
 
+def extractSlice()
+
 def convertOffset(positionOffsetVector):
     # generate a direction integer from an n-dimensional offset (e.g., [0, -1, 0] -> 3)
     # Convert [1, -1] to [0, 1]

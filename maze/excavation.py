@@ -1,5 +1,5 @@
 import numpy as np
-import scipy as sp
+import scipy.sparse
 
 def removeWalls(oldPos, newPos, room):
     # Check if locations are actually adjacent
@@ -24,7 +24,6 @@ def removeWalls(oldPos, newPos, room):
 
 def createHoles(room, holeVolume, holeCount):
     # Create a sequence of hyperrectangles that fulfill the volume criterium
-    volume = 0
     roomSize = room.cells.shape
     maxDim = len(roomSize)
     singleVolume = holeVolume / holeCount
@@ -33,7 +32,6 @@ def createHoles(room, holeVolume, holeCount):
         totalVolume = 0
         for holeID in range(holeCount):
             # Create a single hyperrectangle
-            dimensions = [0] * maxDim
             averageLength = singleVolume**(1./maxDim)
             deviation = averageLength * 0.3
             dimensions = np.round(np.random.normal(averageLength, deviation, maxDim))
@@ -42,34 +40,35 @@ def createHoles(room, holeVolume, holeCount):
             totalVolume += volume
 
     # If volume constraints are fulfilled, continue carving out these holes out of the grid
-    totalOverlap = True
     totalAttempts = 0
-    while totalOverlap and totalAttempts < 10000 * len(rectangles):
+    totalSuccess = False
+    while not totalSuccess and totalAttempts < 10000 * len(rectangles):
         totalAttempts += 1
-        holeGrid = np.zeros(roomSize, dtype=bool)
-        #holeGrid = sc.lil_matrix(roomSize, dtype=bool)
+        sucesses = []
         for rectangle in rectangles:
             overlap = True
-            while overlap:
-                startPoint = [0] * maxDim
-                # select a random starting point within the grid
+            totalRectangleAttempts = 0
+            while overlap and totalRectangleAttempts < 1000:
+                totalRectangleAttempts += 1
+                selectionRange = [[]] * maxDim
+                # place a random rectangle within the grid
                 for d in range(maxDim):
                     point = random.randint(1, roomSize[d] - rectangle[d] - 1)
-                    startPoint[d] = point
-                # select a slice of the room volume
-                slice = holeGrid.copy()
-                for d in range(maxDim):
-                    slice = slice[..., startPoint[d] + rectangle[d]]
-                # check for overlap with existing holes
-                if something:
-                    overlap = False
-        if not overlap:
-            totalOverlap = False
-        # If totalOverlap then start over with a new layout
+                    selectionRange[d] = np.array(range(point, point + rectangle[d]))
+                # see if it overlaps with any other rectangle
+                holeSlice = room.cells[selectionRange]
+                overlap = np.all(holeSlice)
+            if not overlap:
+                # Set the rectangle to empty space (=False)
+                successes.append(1)
+                room.cells[selectionRange] = False
+
+        # Check if all rectangles were placed
+        totalSuccess = sum(successes) == len(rectangles)
+
+    # If it didn't work out, start over with a new layout
     if totalAttempts >= 10000*len(rectangles):
         print('Too many holes to place without overlap!')
-
-
     return room
 
 def carvePassages(room, startPosition, flatness):
