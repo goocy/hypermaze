@@ -14,13 +14,13 @@ def createMaze(dimensions, startPosition, passageProperties):
     wallThickness = 1
     
     print('Creating empty grid of rooms')
-    room = maze.helpers.Room(dimensions['room'])
-    room = maze.excavation.createHoles(room)
+    room = maze.Room(dimensions['room'])
+    room = maze.createHoles(room)
     
     print('Carving passages')
-    maze, stackSize = maze.excavation.carvePassages(room, startPosition, passageProperties['flatness'])
+    maze, stackSize = maze.carvePassages(room, startPosition, passageProperties['flatness'])
     print('Setting the exit point')
-    maze, exitPoint = createExit(maze, stackSize, startPosition)
+    maze, exitPoint = maze.createExit(maze, stackSize, startPosition)
     
     print('Clearing connected walls')
     maze = maze.excavation.clearConnectedWalls(maze, stackSize, passageProperties['shortcutDensity'], passageProperties['shortcutStrength'])

@@ -3,14 +3,12 @@ import numpy as np
 
 class Room:
     def __init__(self, dimensions):
-        dimensions = self.dimensions
-        self.walls = 2 * len(dimensions) * [np.zeros(dimensions, dtype=bool),]
-        self.cells = np.zeros(dimensions, dtype=bool)
+        self.dimensions = dimensions
+        self.cells = np.ones(dimensions, dtype=bool)
+        self.walls = [np.ones(dimensions, dtype=bool) for d in range(2 * len(dimensions))]
 
     def __repr__(self):
-        filled = np.sum(self.cells) / np.prod(dimensions)
-        walled = np.sum(self.walls) / (np.prod(dimensions) * len(dimensions) * 2)
-        return 'Room grid with dimensions {}x{}x{}, {:%} of all rooms filled, {:%} of all walls standing'.format(dimensions*, filled, walled)
+        return 'Room grid with dimensions {}'.format(self.dimensions)
 
     def setWalls(self, position, walls):
         if len(walls) == len(self.walls):
@@ -23,8 +21,6 @@ def weightedRandom(weights):
         rnd -= w
         if rnd < 0:
             return i
-
-def extractSlice()
 
 def convertOffset(positionOffsetVector):
     # generate a direction integer from an n-dimensional offset (e.g., [0, -1, 0] -> 3)
@@ -50,16 +46,18 @@ def convertDirection(direction):
     return dim, offset
 
 def lookupDirections(currentPosition, directions, roomSize):
-    positions = []
-    for direction in directions: # Iterate through every possible dimensional direction
+    positions = [[]]*len(directions)
+    for i, direction in enumerate(directions): # Iterate through every possible dimensional direction
         # Initiate the offset for the current direction, e.g., -1
         dim, offset = convertDirection(direction)
         neighborPosition = list(currentPosition)
-        neighborPosition[dim] += positionOffset
+        neighborPosition[dim] += offset
 
         # Make an exception for grid boundaries
-        if neighborPosition < 0 or neighborPosition > roomSize[dim]:
-            positions[direction] = None
+        if neighborPosition[dim] < 0 or neighborPosition[dim] > roomSize[dim] - 1:
+            positions[i] = None
         else:
-            positions[direction] = neighborPosition
+            positions[i] = tuple(neighborPosition)
+    if len(directions) == 1:
+        positions = positions[0]
     return positions
