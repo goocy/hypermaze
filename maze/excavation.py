@@ -4,16 +4,16 @@ import random
 import maze
 
 def removeWalls(oldPos, newPos, room):
-    # Check if locations are actually adjacent
-    positionOffset = [n - o for n,o in zip(newPos, oldPos)]
-    distance = sum([abs(p) for p in positionOffset])
 
-    if distance == 1:
-        direction = maze.convertOffset(positionOffset)
+    # Check if locations are actually adjacent
+    dim, offset = maze.subtractLists(oldPos, newPos)
+
+    if offset == 1 or offset == -1:
+        direction = maze.convertOffset(dim, offset)
         room.walls[direction][newPos] = False
 
-        positionOffset = [o - n for n,o in zip(newPos, oldPos)]
-        direction = maze.convertOffset(positionOffset)
+        dim, offset = maze.subtractLists(newPos, oldPos)
+        direction = maze.convertOffset(dim, offset)
         room.walls[direction][oldPos] = False
     else:
         print('Positions not adjacent!')
@@ -54,7 +54,7 @@ def createHoles(room, holeVolume, holeCount):
     while not totalSuccess and totalAttempts < 10000 * len(rectangles):
         totalAttempts += 1
         print('Placing {} rectangles, attempt {}'.format(len(rectangles), totalAttempts))
-        successes = []
+        successes = 0
         for rectangleID, rectangle in enumerate(rectangles):
             sliceIsFilled = False
             totalRectangleAttempts = 0
@@ -85,14 +85,14 @@ def createHoles(room, holeVolume, holeCount):
                 sliceIsFilled = np.all(holeSlice)
             if sliceIsFilled:
                 # Continue with the excavation: set the rectangle to empty space
-                successes.append(1)
+                successes += 1
                 room.cells[selection] = False
                 print('Success at placing rectangle {}'. format(rectangleID))
             else:
                 print('Overlap detected at rectangle {}'.format(rectangleID))
 
         # Check if all rectangles were placed
-        totalSuccess = sum(successes) == len(rectangles)
+        totalSuccess = successes == len(rectangles)
         # If it didn't work out, start over with a new layout
 
     if totalAttempts >= 10000*len(rectangles):
@@ -101,6 +101,7 @@ def createHoles(room, holeVolume, holeCount):
 
 def carvePassages(room, startPosition, flatness):
     roomSize = room.cells.shape
+    offsetTable = maze.generateConversionTable(roomSize)
     maxDim = len(roomSize)
     stackSize = np.zeros(roomSize)
     if any([s>g for s, g in zip(startPosition, roomSize)]):
@@ -110,28 +111,32 @@ def carvePassages(room, startPosition, flatness):
     h = (np.arctan(flatness)/np.pi)+0.5 # percentage of horizontal wall crossings, in the range of ]0 1[
     directionalWeight = [h, h, h, h, 1-h, 1-h] # this needs to be adapted for multidimensional grids
     stack = []
+    filledCount = np.sum(room.cells)
     # Continue until all cells are empty
-    while np.sum(room.cells) > 0:
-        # Determine all possible neighbor positions by trying every direction
-        directions = range(maxDim * 2)
-        neighborPositions = maze.lookupDirections(currentPosition, directions, roomSize)
+    while filledCount > 0:
+        # Determine all possible neighbor positions
+        neighborPositions = maze.findNeighborPositions(currentPosition, roomSize, offsetTable)
         neighborsFilled = []
+        neighborsFilledCount = 0
         for neighborPosition in neighborPositions:
             if neighborPosition is not None:
-                neighborsFilled.append(room.cells[neighborPosition])
+                n = room.cells[neighborPosition]
+                if n:
+                    neighborsFilledCount += 1
+                neighborsFilled.append(n)
             else:
                 neighborsFilled.append(False)
 
         # If the current cell has any non-empty neighbour cells
-        if any(neighborsFilled):
+        if neighborsFilledCount > 0:
             # Choose randomly one of the unvisited neighbours
-            if sum(neighborsFilled) > 1:
+            if neighborsFilledCount > 1:
                 currentWeight = [d * f for d, f in zip(directionalWeight, neighborsFilled)]
-                selectedDirection = [maze.weightedRandom(currentWeight)]
+                selectedDirection = maze.weightedRandom(currentWeight)
             else:
-                selectedDirection = [neighborsFilled.index(True)]
+                selectedDirection = neighborsFilled.index(True)
 
-            newPosition = maze.lookupDirections(currentPosition, selectedDirection, roomSize)
+            newPosition = maze.lookupDirection(currentPosition, selectedDirection, roomSize, offsetTable)
             # Push the current cell to the stack
             stack.append(currentPosition)
             # Stack size is a simple indicator for "distance to the start point", so we save it for every point
@@ -141,6 +146,7 @@ def carvePassages(room, startPosition, flatness):
             # Make the chosen cell the current cell and mark it as empty
             currentPosition = tuple(newPosition)
             room.cells[currentPosition] = False
+            filledCount -= 1
         
         elif not len(stack) == 0:
             # We're in a dead end, retrace our steps
@@ -153,4 +159,5 @@ def carvePassages(room, startPosition, flatness):
                 randomIndex = maze.weightedRandom([1]*roomSize[i])
                 currentPosition.append(randomIndex)
             room.cells[currentPosition] = False
+            filledCount -= 1
     return room, stackSize
