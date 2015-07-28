@@ -40,8 +40,8 @@ def convertOffset(dim, offset):
 
 def generateConversionTable(roomSize):
     # Convert a table that converts direction into a dimensional offset and vice versa
-    # offsets come in the format [dim[0]+1, dim[0]-1, dim[1]+1, ...]
     # directions are a single number specifying the direction
+    # offsets come in the format [dim[0]+1, dim[0]-1, dim[1]+1, ...]
     maxDim = len(roomSize)
     offsetTable = list()
     offsets = [1, -1]

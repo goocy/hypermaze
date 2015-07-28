@@ -4,7 +4,6 @@ import random
 import maze
 
 def removeWalls(oldPos, newPos, room):
-
     # Check if locations are actually adjacent
     dim, offset = maze.subtractLists(oldPos, newPos)
 
@@ -99,17 +98,20 @@ def createHoles(room, holeVolume, holeCount):
         print('Too many holes to place without overlap!')
     return room
 
-def carvePassages(room, startPosition, flatness):
+def carvePassages(room, startPosition, flatness, exitWallSide = -1, livePlot=True):
     roomSize = room.cells.shape
     offsetTable = maze.generateConversionTable(roomSize)
-    maxDim = len(roomSize)
     stackSize = np.zeros(roomSize)
     if any([s>g for s, g in zip(startPosition, roomSize)]):
         error('startPosition outside of room dimensions!')
     room.cells[startPosition] = True
     currentPosition = startPosition
-    h = (np.arctan(flatness)/np.pi)+0.5 # percentage of horizontal wall crossings, in the range of ]0 1[
-    directionalWeight = [h, h, h, h, 1-h, 1-h] # this needs to be adapted for multidimensional grids
+    directionalWeight = [(np.arctan(f)/np.pi)+0.5 for f in flatness for _ in (0,1)]
+    # directionalWeight indicates the chance of a straight wall without corners, in the range of ]0% to 100%[
+    # The "flatness" variable accepts one value for every dimension, from -inf to +inf
+    # Example flatness values and passage probabilities: -31: 1%, -6.3: 5%, -1.4: 20%, 0: 50%, 1.4: 80%, 6.3: 95%, 31: 99%
+    # Example: a flatness of (5, 5, -2) creates long passages and plenty of corners in the first two dimensions ("left/right", "forwards/backwards"), with only the occasional passage into the third dimension ("up/down")
+    # Probability values are corrected afterwards so that they sum up to 100%
     stack = []
     filledCount = np.sum(room.cells)
     # Continue until all cells are empty
@@ -129,7 +131,7 @@ def carvePassages(room, startPosition, flatness):
 
         # If the current cell has any non-empty neighbour cells
         if neighborsFilledCount > 0:
-            # Choose randomly one of the unvisited neighbours
+            # Choose (randomly) one of the unvisited neighbours
             if neighborsFilledCount > 1:
                 currentWeight = [d * f for d, f in zip(directionalWeight, neighborsFilled)]
                 selectedDirection = maze.weightedRandom(currentWeight)
@@ -156,8 +158,23 @@ def carvePassages(room, startPosition, flatness):
             # current position is in a dead end; start with different random point instead
             currentPosition = []
             for i in range(len(roomSize)):
-                randomIndex = maze.weightedRandom([1]*roomSize[i])
+                randomIndex = int(random.random()*roomSize[i])
                 currentPosition.append(randomIndex)
             room.cells[currentPosition] = False
             filledCount -= 1
-    return room, stackSize
+    # Create an exit at the appropriate side
+    # First, extract the correct wall from the array stackSize
+    exitWallOffset = offsetTable[exitWallSide]
+    exitWallDimension = exitWallSide // 2 # using the old Python 2 division on purpose
+    exitWallIndex = sum(exitWallOffset)
+    # Walls of an n-dimensional body are n-1-dimensional.
+    # I'm constructing a selector that selects everything except for one dimension
+    wallSelector = [slice(None)]*len(stackSize.shape) # slice takes up to three parameters: (start, stop, step). Passing None is equal to the [:] notation
+    wallSelector[exitWallDimension] = slice(exitWallIndex, None, None) # this selects either the first, or the last element on this axis
+    exitWall = stackSize[wallSelector]
+    # Second, determine the coordinates of the largest element in the selected slice of stackSize
+    exitWallElement = np.argmax(exitWall)
+    exitCoordinates = list(np.unravel_index(exitWallElement, exitWall.shape))
+    # Third, convert the local coordinates into global coordinates
+    exitCoordinates[exitWallDimension] = exitWallIndex
+    return room, exitCoordinates
