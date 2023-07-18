@@ -4,7 +4,8 @@ Hello there, interdimensional traveler! You found the perfect project for gettin
 
 ## Overview
 
-This Maze Generator employs a custom algorithm that conjures a Room class to represent the maze, etches passages between cells within the room, and then brings to life your maze for your viewing pleasure. All of this multi-dimensional magic is wrapped up in a few Python modules that do everything from manipulating the hypermaze grid, to carving the inter-dimensional passages, and finally to rendering your stunning, labyrinthine creation.
+Typically, you would conjure a new fully-filled grid space from the Room class. Feel free to add caverns at this stage.
+Then you etch passages between cells within the room, bringing the maze structures to life. You can watch the creation if you want, and of course there are numerous parameters to tune.
 
 ## Features
 
