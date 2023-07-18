@@ -2,7 +2,41 @@ import pymclevel
 import numpy as np
 from scipy.ndimage.morphology import binary_erosion
 
+
 def insertToMinecraft(worldFilename, renderedMaze, insertionHeight):
+    """
+    Inserts a rendered 3D maze into a specified Minecraft world at a given height.
+
+    Parameters
+    ----------
+    worldFilename : str
+        The filename (with the full path if needed) of the Minecraft world where the maze will be inserted.
+
+    renderedMaze : ndarray
+        A 3D numpy array representing the maze, where True values represent walls and False values represent passages.
+
+    insertionHeight : int
+        The y-coordinate in the Minecraft world where the bottom of the maze will be placed. This is the height in blocks
+        above the bottom of the world. The world's height limit is 256 blocks, so the sum of insertionHeight and the height
+        of the maze cannot exceed this value.
+
+    Returns
+    -------
+    mazeEntrance : list
+        A list containing the [x, z, y] coordinates of the entrance to the maze in the Minecraft world.
+
+    Raises
+    ------
+    ValueError
+        If the specified maze is too tall and exceeds the level limits by a certain number of blocks, or if the maze is
+        too large to fit in the available area of the Minecraft world.
+
+    Notes
+    -----
+    This function uses the pymclevel library to read and manipulate Minecraft world files. The maze is placed in such a
+    way that it does not intersect with any existing structures in the world.
+    """
+
     y = [insertionHeight, insertionHeight + renderedMaze.shape[2], renderedMaze.shape[2]]
     if y[1] > 256:
         error('Your maze is too tall and exceeds the level limits by {:d} blocks. Please lower insertionHeight or your maze.'.format(256 - y[1]))

@@ -3,6 +3,14 @@ import numpy as np
 from PIL import Image
 
 def plot2DMaze(m, stackSize, newWindow = True):
+	"""
+	This function is used to plot the 2D representation of the maze.
+
+	Args:
+	m: An instance of the Room class representing the maze.
+	stackSize: A matrix that represents the size of the stack in the maze.
+	newWindow (optional): A boolean value which when True creates a new window for the plot. Defaults to True.
+	"""
 	# Bring the stack into the same coordinate system as the maze and plot it
 	s = np.flipud(np.rot90(np.squeeze(stackSize)))
 	# Plot the maze walls
@@ -28,6 +36,14 @@ def plot2DMaze(m, stackSize, newWindow = True):
 		plt.draw()
 
 def renderWalls(m, passageSize, wallThickness):
+	"""
+	This function renders walls of the maze by defining space for each cell and corner pillars.
+
+	Args:
+	m: An instance of the Room class representing the maze.
+	passageSize: An integer value representing the size of the passage in the maze.
+	wallThickness: An integer value representing the thickness of the walls in the maze.
+	"""
 	gridSize = m.dimensions # for example, (51,51,10)
 	cellSize = passageSize + wallThickness * 2
 	cornerBlocks = [[cellSize-wallThickness, cellSize], [0, wallThickness]]
@@ -80,9 +96,16 @@ def renderWalls(m, passageSize, wallThickness):
 	return space
 
 def saveToPNG(renderedMaze, outputPath):
+	"""
+	This function saves the rendered maze to a PNG file.
+
+	Args:
+	renderedMaze: A matrix representing the rendered maze.
+	outputPath: A string representing the path to save the PNG file.
+	"""
 	imageFilename = '{}/maze-layer{:d}.png'
 	if len(renderedMaze.shape) == 2:
-		image = Image.fromarray(np.uint8(renderedMaze)*255)
+		image = Image.fromarray(np.rot90(np.uint8(renderedMaze)*255))
 		image.save(imageFilename.format(outputPath, 0))
 	elif len(renderedMaze.shape) == 3:
 		for layer in range(renderedMaze.shape[2]):
