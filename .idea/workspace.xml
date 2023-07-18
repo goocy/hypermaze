@@ -4,17 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a7a807b9-13e1-4c37-b965-fedc669cae44" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Readme.md" afterDir="false" />
+    <list default="true" id="a7a807b9-13e1-4c37-b965-fedc669cae44" name="Default" comment="Updated the import helpers to Python 3. Ahem.">
+      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/maze3d-python.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/maze3d-python.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/createMaze.py" beforeDir="false" afterPath="$PROJECT_DIR$/createMaze.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/exampleMaze.py" beforeDir="false" afterPath="$PROJECT_DIR$/exampleMaze.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/exampleSuperMaze.py" beforeDir="false" afterPath="$PROJECT_DIR$/exampleSuperMaze.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/maze/excavation.py" beforeDir="false" afterPath="$PROJECT_DIR$/maze/excavation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/maze/helpers.py" beforeDir="false" afterPath="$PROJECT_DIR$/maze/helpers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/maze/minecraft.py" beforeDir="false" afterPath="$PROJECT_DIR$/maze/minecraft.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/maze/plotTools.py" beforeDir="false" afterPath="$PROJECT_DIR$/maze/plotTools.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/maze/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/maze/__init__.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -135,7 +131,8 @@
   "keyToString": {
     "ASKED_ADD_EXTERNAL_FILES": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "last_opened_file_path": "F:/maze3d-python"
+    "last_opened_file_path": "F:/maze3d-python",
+    "settings.editor.selected.configurable": "preferences.keymap"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -236,6 +233,14 @@
       <option name="presentableId" value="Default" />
       <updated>1434353394232</updated>
     </task>
+    <task id="LOCAL-00001" summary="Added documentation for everything with the help of chatGPT4. Might not be perfectly accurate but at least 95%.">
+      <created>1689715054896</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1689715054896</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -271,6 +276,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="Added documentation for everything with the help of chatGPT4. Might not be perfectly accurate but at least 95%." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added documentation for everything with the help of chatGPT4. Might not be perfectly accurate but at least 95%." />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/maze/helpers.py">
