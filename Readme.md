@@ -17,7 +17,7 @@ Then you etch passages between cells within the room, bringing the maze structur
 
 * **Live Plotting**: Witness your maze getting born in real-time by setting the livePlot argument to True in the carvePassages function. It's like watching the birth of a universe, but with fewer physics involved.
 
-* **Maze Rendering**: Our plotTools module will render your maze into beautiful voxels. It's like turning your algorithm into art.
+* **Maze Rendering**: Our plotTools module will render your maze into beautiful voxels. You can even get lost inside your creation in Minecraft.
 
 * **Save to PNG**: Once your maze has been lovingly carved and beautifully rendered, you can immortalize it as a PNG file to show off to your friends, or to perplex them with a challenge to find the exit.
 
