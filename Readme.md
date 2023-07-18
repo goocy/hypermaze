@@ -42,7 +42,7 @@ holeyRoom = maze.excavation.createHoles(room, sum(roomSize) * 0.05, 5)
 # Continue with the process as before
 entrancePoint = (0,11)
 print('Carving passages...')
-exampleMaze, stackSize = maze.excavation.carvePassages(holeyRoom, entrancePoint, flatness, livePlot=False)
+exampleMaze, stackSize = maze.excavation.carvePassages(holeyRoom, entrancePoint, flatness, livePlot=True)
 
 print('Rendering walls...')
 renderedMaze = maze.plotTools.renderWalls(exampleMaze, passageSize, 1)
