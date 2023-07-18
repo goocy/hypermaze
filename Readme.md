@@ -1,14 +1,15 @@
-# Maze Generator
+# Hypermaze Generator
 
-Hello there, interdimensional traveler! Welcome to the Maze Generator, the perfect project for getting lost in the algorithmic labyrinths beyond the limitations of our earthly dimensions. This project allows you to generate mind-bending mazes of any number of dimensions, watch their creation in real-time, and save them for future exploration, research, or interdimensional fun.
+Hello there, interdimensional traveler! You found the perfect project for getting lost in the algorithmic labyrinths beyond the limitations of our earthly dimensions. This project allows you to generate mind-bending mazes of any number of dimensions, watch their creation in real-time, and save them for future exploration, research, or interdimensional fun.
 
 ## Overview
 
-This Maze Generator employs a custom algorithm that conjures a Room class to represent the maze, etches passages between cells within the room, and then brings to life your maze for your viewing pleasure. All of this multi-dimensional magic is wrapped up in a few Python modules that do everything from manipulating the hypermaze grid, to carving the inter-dimensional passages, and finally to rendering your stunning, labyrinthine creation.
+Typically, you would conjure a new fully-filled grid space from the Room class. Feel free to add caverns at this stage.
+Then you etch passages between cells within the room, bringing the maze structures to life. You can watch the creation if you want, and of course there are numerous parameters to tune.
 
 ## Features
 
-* **N-dimensional mazes**: Don't get restricted by the limits of our known reality! The core functions support as many dimensions as your computer can handle.
+* **N-dimensional mazes**: Don't get restricted by the limits of our known reality! The core functions support as many dimensions as your computer can handle. Don't be ashamed if you start out with ordinary 2D mazes though, those can be fun too!
 
 * **Flexible maze carving**: The excavation module allows you to specify the entrance point and the side of the exit wall. Whether you want a traditional one-way journey or an Escheresque maze that exits where it started, we've got you covered.
 
@@ -16,7 +17,7 @@ This Maze Generator employs a custom algorithm that conjures a Room class to rep
 
 * **Live Plotting**: Witness your maze getting born in real-time by setting the livePlot argument to True in the carvePassages function. It's like watching the birth of a universe, but with fewer physics involved.
 
-* **Maze Rendering**: Our plotTools module will render your maze into beautiful voxels. It's like turning your algorithm into art.
+* **Maze Rendering**: Our plotTools module will render your maze into beautiful voxels. You can even get lost inside your creation in Minecraft.
 
 * **Save to PNG**: Once your maze has been lovingly carved and beautifully rendered, you can immortalize it as a PNG file to show off to your friends, or to perplex them with a challenge to find the exit.
 
@@ -41,7 +42,7 @@ holeyRoom = maze.excavation.createHoles(room, sum(roomSize) * 0.05, 5)
 # Continue with the process as before
 entrancePoint = (0,11)
 print('Carving passages...')
-exampleMaze, stackSize = maze.excavation.carvePassages(holeyRoom, entrancePoint, flatness, livePlot=False)
+exampleMaze, stackSize = maze.excavation.carvePassages(holeyRoom, entrancePoint, flatness, livePlot=True)
 
 print('Rendering walls...')
 renderedMaze = maze.plotTools.renderWalls(exampleMaze, passageSize, 1)
