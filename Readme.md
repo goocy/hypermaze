@@ -1,6 +1,6 @@
-# Maze Generator
+# Hypermaze Generator
 
-Hello there, interdimensional traveler! Welcome to the Maze Generator, the perfect project for getting lost in the algorithmic labyrinths beyond the limitations of our earthly dimensions. This project allows you to generate mind-bending mazes of any number of dimensions, watch their creation in real-time, and save them for future exploration, research, or interdimensional fun.
+Hello there, interdimensional traveler! You found the perfect project for getting lost in the algorithmic labyrinths beyond the limitations of our earthly dimensions. This project allows you to generate mind-bending mazes of any number of dimensions, watch their creation in real-time, and save them for future exploration, research, or interdimensional fun.
 
 ## Overview
 
@@ -8,7 +8,7 @@ This Maze Generator employs a custom algorithm that conjures a Room class to rep
 
 ## Features
 
-* **N-dimensional mazes**: Don't get restricted by the limits of our known reality! The core functions support as many dimensions as your computer can handle.
+* **N-dimensional mazes**: Don't get restricted by the limits of our known reality! The core functions support as many dimensions as your computer can handle. Don't be ashamed if you start out with ordinary 2D mazes though, those can be fun too!
 
 * **Flexible maze carving**: The excavation module allows you to specify the entrance point and the side of the exit wall. Whether you want a traditional one-way journey or an Escheresque maze that exits where it started, we've got you covered.
 
