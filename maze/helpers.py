@@ -1,5 +1,6 @@
-import random
 import numpy as np
+import itertools
+import random
 
 """
 The class Room represents a room with certain dimensions, and methods for setting and removing walls at certain positions.
@@ -12,13 +13,22 @@ The findNeighborPositions() function finds all neighbor cell positions from the 
 """
 
 class Room:
-	def __init__(self, dimensions):
-		self.dimensions = dimensions
-		self.cells = np.ones(dimensions, dtype=bool)
-		self.walls = [np.ones(dimensions, dtype=bool) for d in range(2 * len(dimensions))]
+	"""
+	A class with two main attributes: cells and walls.
+	Both are initialized to be completely filled, so any maze will has to be excavated.
+	cells is an n-dimensional array of booleans, where True represents filled space and False represents empty space.
+	walls is a hyper-object. Each entry in the list is an n-dimensional array of booleans, where True represents a wall and False represents an opening.
+		Each entry in this list represents a different direction in n-dimensional space.
+		walls[0] and walls [1] represent the left and right walls respectively. walls[2] and walls[3] represent top and bottom walls, and this continues for higher dimensions.
+	Only the walls variable is used for plotting the finished maze.
+	"""
+	def __init__(self, shape):
+		self.shape = shape
+		self.cells = np.ones(shape, dtype=bool)
+		self.walls = [np.ones(shape, dtype=bool) for d in range(2 * len(shape))]
 
 	def __repr__(self):
-		return 'Room grid with dimensions {}'.format(self.dimensions)
+		return 'Room grid with dimensions {}'.format(self.shape)
 
 	def setWalls(self, position, walls):
 		"""
@@ -57,7 +67,55 @@ class Room:
 			self.walls[newDirection][newPos] = False
 			self.walls[oldDirection][oldPos] = False
 		else:
-			error('The two walls aren''t adjacent!')
+			raise ValueError('The two walls aren''t adjacent!')
+
+	def excavate_cavern(self, cavern):
+		"""
+		Excavate a cavern by setting all cells within the cavern to False and removing the walls within the cavern space.
+
+		Parameters:
+		cavern: dict
+			A dictionary containing the position and shape of the cavern.
+			The position is a tuple of coordinates indicating the starting corner of the cavern within the room.
+			The shape is a tuple of dimensions indicating the size of the cavern to be excavated.
+
+		"""
+		position = np.array(cavern['position'])
+		shape = np.array(cavern['shape'])
+
+		# Establish the coordinate range of the cavern in each dimension
+		coordinate_slices = [slice(p, p + d) for p, d in zip(position, shape)]
+
+		# Set all cells in the room to False if they are within the cavern
+		self.cells[tuple(coordinate_slices)] = False
+
+		# For each cell in the cavern, remove the walls with its neighbors
+		# We do this by iterating over all possible directions (i.e., neighboring cells) and call room.removeWalls() for each one.
+		directions = [np.eye(len(shape), dtype=int), -np.eye(len(shape), dtype=int)]
+		for direction in itertools.chain(*directions):
+
+			# Get the slice in each dimension that has a neighbor in the current direction
+			neighbor_slices = []
+			neighbor_positions = []
+			for p, d, s in zip(position, direction, self.shape):  # Iterate over each dimension of the room
+				# Get the slice in the current dimension that has a neighbor in the current direction
+				startPosition = max(p - d, 0)  # The start position of the slice is the current position minus the direction, but not less than 0
+				endPosition = min(p + d, s - d)  # The end position of the slice is the current position plus the direction, but not more than the room size minus the direction
+				neighbor_slice = slice(startPosition, endPosition)
+				neighbor_slices.append(neighbor_slice)
+
+				# Calculate the position of the neighbor in the current dimension
+				neighbor_position = slice(np.clip(p + d, 0,
+												  s - 1))  # The position of the neighbor is the current position plus the direction, but not less than 0 and not more than the room size minus 1
+				neighbor_positions.append(neighbor_position)
+
+			# Get all cells that have a neighbor in the current direction
+			cells = np.array(np.where(self.cells[tuple(neighbor_slices)]))
+
+			# For each cell, remove the wall with its neighbor in the current direction
+			for cell in cells.T:
+				self.removeWalls(tuple(cell), tuple(cell + direction))
+
 
 def weightedRandom(weights):
 	"""
@@ -118,15 +176,15 @@ def convertOffset(dim, offset):
 
 	Parameters
 	----------
-	dim : int
+	dim : ndarray
 		The dimension.
 
-	offset : int
+	offset : ndarray
 		The offset (-1, 1).
 
 	Returns
 	-------
-	int
+	ndarray
 		The converted index.
 	"""
 	# Convert [1, -1] to [0, 1]
@@ -151,10 +209,10 @@ def generateConversionTable(roomSize):
 	maxDim = len(roomSize)
 	offsetTable = list()
 	offsets = [1, -1]
-	for direction in xrange(maxDim * 2):
+	for direction in range(maxDim * 2):
 		d = direction % 2
 		offset = offsets[d]
-		dim = direction / 2
+		dim = int(direction / 2)
 		offsetVector = [0] * maxDim
 		offsetVector[dim] = offset
 		offsetTable.append(offsetVector)
@@ -185,7 +243,7 @@ def lookupDirection(currentPosition, direction, roomSize, offsetTable):
 	"""
 	offsetVector = offsetTable[direction]
 	neighborPosition = [o+c for o, c in zip(offsetVector, currentPosition)]
-	dim = direction / 2
+	dim = int(direction / 2)
 	# Make an exception for grid boundaries
 	if neighborPosition[dim] < 0 or neighborPosition[dim] > roomSize[dim] - 1:
 		return None
@@ -213,9 +271,9 @@ def findNeighborPositions(currentPosition, roomSize, offsetTable):
 		A list of positions for neighboring cells. None if out of bounds.
 	"""
 	positions = []
-	for i in xrange(len(offsetTable)):
+	for i in range(len(offsetTable)):
 		position = addLists(currentPosition, offsetTable[i])
-		dim = i / 2
+		dim = int(i / 2)
 		if 0 <= position[dim] <= roomSize[dim] - 1:
 			positions.append(tuple(position))
 		else:

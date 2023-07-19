@@ -3,11 +3,11 @@ import maze.plotTools
 import maze.excavation
 
 # Generate a maze
-roomSize = (13,25)
+roomSize = (13,13)
 flatness = (0.5,-0.5)
 room = maze.helpers.Room(roomSize)
-print(room.dimensions)
-holeyRoom = maze.excavation.createHoles(room, sum(roomSize) * 0.05, 5) # 5 holes with a total volume of 5%
+print(room.shape)
+# holeyRoom = maze.excavation.carveCaverns(room, fillRatio=0.05, typicalCavernDiameter=5) # currently broken, don't use
 entrancePoint = (0,11)
 print('Carving passages...')
 exampleMaze, stackSize = maze.excavation.carvePassages(holeyRoom, entrancePoint, flatness, livePlot=True)
